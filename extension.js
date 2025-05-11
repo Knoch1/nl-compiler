@@ -1,11 +1,21 @@
 const vscode = require('vscode');
 const { init } = require('./src/init');
+const { compile } = require('./src/main');
 
 function activate(context) {
   const watcher = vscode.workspace.createFileSystemWatcher('**/*.nl.html');
-  watcher.onDidCreate(init);
+  watcher.onDidCreate((uri) => {
+    init(uri);
+  });
 
   context.subscriptions.push(watcher);
+
+  const saveListener = vscode.workspace.onDidSaveTextDocument((doc) => {
+    if (doc.fileName.endsWith('.nl.html')) {
+      compile(doc);
+    }
+  });
+  context.subscriptions.push(saveListener);
 }
 
 function deactivate() {}
