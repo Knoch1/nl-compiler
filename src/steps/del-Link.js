@@ -12,63 +12,105 @@ function transformHtml($) {
   const href=nlcompData('href');
   const impressum = nlcompData('impressum');
   const tracing = nlcompData('tracing');
-  // createheader($);
+  const lang = nlcompData('lang');
+//   // createheader($);
  
   
 
-  
-  // function convertDivs($el) {
-  //   $el.children('div').each((_, child) => {
-  //     convertDivs($(child)); // recurse first
-  //   });
-  
-  //   const children = $el.children();
-  //   const classAttr = $el.attr('class');
-  //   const tableStyle = $el.attr('style') ? ` style="${$el.attr('style')}"` : '';
-  
-  //   function getStyledTd(child) {
-  //     const $child = $(child);
-  //     const tdStyle = $child.attr('style') ? ` style="${$child.attr('style')}"` : '';
-  //     return `<td${tdStyle}>${$.html(child)}</td>`;
-  //   }
-  
-  //   if ($el.hasClass('row')) {
-  //     const cells = children.map((_, child) => getStyledTd(child)).get().join('');
-  //     const table = `<table${tableStyle}><tr>${cells}</tr></table>`;
-  //     $el.replaceWith(table);
-  //   } else if ($el.hasClass('column')) {
-  //     const rows = children.map((_, child) => `<tr>${getStyledTd(child)}</tr>`).get().join('');
-  //     const table = `<table${tableStyle}>${rows}</table>`;
-  //     $el.replaceWith(table);
-  //   } else if (!classAttr) {
-  //     if (children.length <= 1) {
-  //       const content = children.length === 1 ? getStyledTd(children[0]) : '<td></td>';
-  //       const table = `<table${tableStyle}><tr>${content}</tr></table>`;
-  //       $el.replaceWith(table);
-  //     } else {
-  //       throw new Error(`Div without class has multiple children:\n${$.html($el)}`);
-  //     }
-  //   }
-  // }
+//   function convertDivs($el) {
+//     const TD_STYLE_PROPS = [
+//       'padding', 'color', 'font-size', 'line-height', 'text-align', 'vertical-align',
+//       'font-family', 'text-decoration', 'font-weight', 'height', 'width', 'border'
+//     ];
+//   const TABLE_STYLE_PROPS = ['background-color', 'margin', 'display', 'border-collapse'];
+
+//   // Recursively process inner divs
+//   $el.children('div').each((_, child) => {
+//     convertDivs($(child));
+//   });
+
+// const children = $el.contents(); // includes comments, text, and elements
+//   const classAttr = $el.attr('class') || '';
+
+//   // Helper to extract relevant styles from a style string
+//   function extractStyles(styleStr, allowedProps) {
+//     if (!styleStr) return '';
+//     return styleStr
+//       .split(';')
+//       .map(s => s.trim())
+//       .filter(Boolean)
+//       .filter(s => allowedProps.includes(s.split(':')[0].trim()))
+//       .join('; ');
+//   }
+
+//   // Extract table and td styles from the original div
+//   const originalStyle = $el.attr('style') || '';
+//   const tableStyleStr = extractStyles(originalStyle, TABLE_STYLE_PROPS);
+//   const tdStyleStr = extractStyles(originalStyle, TD_STYLE_PROPS);
+
+//   // Classes for <td> (row or column) are handled separately
+//   const tdClassAttr = classAttr.includes('row') || classAttr.includes('column') 
+//     ? ` class="${classAttr}"` 
+//     : '';
+
+//   // Extract other classes (non row/column) for <td>
+//   const otherClasses = classAttr.split(' ').filter(c => !['row', 'column'].includes(c)).join(' ');
+//   const extraClassForTd = otherClasses ? ` class="${otherClasses}"` : '';
+
+//   function getStyledTd(child) {
+//     const $child = $(child);
+//     const childStyle = $child.attr('style') || '';
+//     const childTdStyle = extractStyles(childStyle, TD_STYLE_PROPS);
+//     const combinedTdStyle = [tdStyleStr, childTdStyle].filter(Boolean).join('; ');
+//     return `<td${tdClassAttr}${extraClassForTd}${combinedTdStyle ? ` style="${combinedTdStyle}"` : ''}>${$.html(child)}</td>`;
+//   }
+
+//   let table = '';
+//   const tableStyleAttr = tableStyleStr ? ` style="${tableStyleStr}"` : '';
+
+//   if ($el.hasClass('row')) {
+//     const cells = children.map((_, child) => getStyledTd(child)).get().join('');
+//     table = `<table${tableStyleAttr}><tr>${cells}</tr></table>`;
+//   } else if ($el.hasClass('column')) {
+//     const rows = children.map((_, child) => `<tr>${getStyledTd(child)}</tr>`).get().join('');
+//     table = `<table${tableStyleAttr}>${rows}</table>`;
+//   } else if (!classAttr) {
+//     if (children.length <= 1) {
+//       const content = children.length === 1 ? getStyledTd(children[0]) : `<td${tdClassAttr}></td>`;
+//       table = `<table${tableStyleAttr}><tr>${content}</tr></table>`;
+//     } else {
+//       throw new Error(`Div without class has multiple children:\n${$.html($el)}`);
+//     }
+//   }
+
+//   if (table) {
+//     $el.replaceWith(table);
+//   }
+// }
 function convertDivs($el) {
-  const TD_STYLE_PROPS = [
+  const TD_STYLES = [
     'padding', 'color', 'font-size', 'line-height', 'text-align', 'vertical-align',
     'font-family', 'text-decoration', 'font-weight', 'height', 'width', 'border'
   ];
-  const TABLE_STYLE_PROPS = ['background-color', 'margin', 'display', 'border-collapse'];
+  const TABLE_STYLES = ['background-color', 'margin', 'display', 'border-collapse'];
 
-  // Recursively process inner divs
-  $el.children('div').each((_, child) => {
-    convertDivs($(child));
-  });
-
-  const children = $el.children();
   const classAttr = $el.attr('class') || '';
+  const styleAttr = $el.attr('style') || '';
+  const children = $el.contents(); // includes elements, text, comments
+  const elementChildren = $el.children(); // just element nodes
 
-  // Helper to extract relevant styles from a style string
+  // Recursively convert nested divs
+  $el.children('div').each((_, child) => convertDivs($(child)));
+
+  const tableStyles = extractStyles(styleAttr, TABLE_STYLES);
+  const tdBaseStyles = extractStyles(styleAttr, TD_STYLES);
+
+  const tableStyleAttr = tableStyles ? ` style="${tableStyles}"` : '';
+  const tdClassAttr = getTdClassAttr(classAttr);
+  const extraTdClass = getExtraTdClass(classAttr);
+
   function extractStyles(styleStr, allowedProps) {
-    if (!styleStr) return '';
-    return styleStr
+    return (styleStr || '')
       .split(';')
       .map(s => s.trim())
       .filter(Boolean)
@@ -76,138 +118,71 @@ function convertDivs($el) {
       .join('; ');
   }
 
-  // Extract table and td styles from the original div
-  const originalStyle = $el.attr('style') || '';
-  const tableStyleStr = extractStyles(originalStyle, TABLE_STYLE_PROPS);
-  const tdStyleStr = extractStyles(originalStyle, TD_STYLE_PROPS);
-
-  // Classes for <td> (row or column) are handled separately
-  const tdClassAttr = classAttr.includes('row') || classAttr.includes('column') 
-    ? ` class="${classAttr}"` 
-    : '';
-
-  // Extract other classes (non row/column) for <td>
-  const otherClasses = classAttr.split(' ').filter(c => !['row', 'column'].includes(c)).join(' ');
-  const extraClassForTd = otherClasses ? ` class="${otherClasses}"` : '';
-
-  function getStyledTd(child) {
-    const $child = $(child);
-    const childStyle = $child.attr('style') || '';
-    const childTdStyle = extractStyles(childStyle, TD_STYLE_PROPS);
-    const combinedTdStyle = [tdStyleStr, childTdStyle].filter(Boolean).join('; ');
-    return `<td${tdClassAttr}${extraClassForTd}${combinedTdStyle ? ` style="${combinedTdStyle}"` : ''}>${$.html(child)}</td>`;
+  function getTdClassAttr(classStr) {
+    return classStr.includes('row') || classStr.includes('column')
+      ? ` class="${classStr}"`
+      : '';
   }
 
-  let table = '';
-  const tableStyleAttr = tableStyleStr ? ` style="${tableStyleStr}"` : '';
+  function getExtraTdClass(classStr) {
+    const extra = classStr
+      .split(' ')
+      .filter(c => !['row', 'column'].includes(c))
+      .join(' ');
+    return extra ? ` class="${extra}"` : '';
+  }
+
+  function wrapInTd(child) {
+    if (child.type === 'comment') return `<!--${child.data}-->`;
+
+    const $child = $(child);
+    const childStyle = $child.attr('style') || '';
+    const tdStyles = [tdBaseStyles, extractStyles(childStyle, TD_STYLES)]
+      .filter(Boolean)
+      .join('; ');
+    const styleAttr = tdStyles ? ` style="${tdStyles}"` : '';
+
+    return `<td${tdClassAttr}${extraTdClass}${styleAttr}>${$.html(child)}</td>`;
+  }
+
+  function wrapInTr(tdContent) {
+    return `<tr>${tdContent}</tr>`;
+  }
+
+  let tableHtml = '';
 
   if ($el.hasClass('row')) {
-    const cells = children.map((_, child) => getStyledTd(child)).get().join('');
-    table = `<table${tableStyleAttr}><tr>${cells}</tr></table>`;
+    const tds = children.toArray().map(wrapInTd).join('');
+    tableHtml = `<table${tableStyleAttr}>${wrapInTr(tds)}</table>`;
   } else if ($el.hasClass('column')) {
-    const rows = children.map((_, child) => `<tr>${getStyledTd(child)}</tr>`).get().join('');
-    table = `<table${tableStyleAttr}>${rows}</table>`;
+    const rows = children.toArray().map(child => wrapInTr(wrapInTd(child))).join('');
+    tableHtml = `<table${tableStyleAttr}>${rows}</table>`;
   } else if (!classAttr) {
-    if (children.length <= 1) {
-      const content = children.length === 1 ? getStyledTd(children[0]) : `<td${tdClassAttr}></td>`;
-      table = `<table${tableStyleAttr}><tr>${content}</tr></table>`;
+    if (elementChildren.length <= 1) {
+      const content = elementChildren.length === 1
+        ? wrapInTd(elementChildren[0])
+        : `<td${tdClassAttr}></td>`;
+      tableHtml = `<table${tableStyleAttr}>${wrapInTr(content)}</table>`;
     } else {
       throw new Error(`Div without class has multiple children:\n${$.html($el)}`);
     }
   }
 
-  if (table) {
-    $el.replaceWith(table);
+  if (tableHtml) {
+    $el.replaceWith(tableHtml);
   }
 }
 
 
 
 
-  // function convertDivs($el) {
-  //   const KEEP_IN_CHILD = [
-  //     'padding',
-  //     'text-align',
-  //     'font-size',
-  //     'margin',
-  //     'line-height',
-  //     'color',
-  //     'text-decoration',
-  //     'font-family'
-  //   ];
-  
-  //   function parseStyle(styleStr) {
-  //     return (styleStr || '')
-  //       .split(';')
-  //       .map(s => s.trim())
-  //       .filter(Boolean)
-  //       .reduce((acc, s) => {
-  //         const [key, value] = s.split(':').map(x => x.trim());
-  //         if (key) acc[key] = value;
-  //         return acc;
-  //       }, {});
-  //   }
-  
-  //   function styleToString(styleObj) {
-  //     return Object.entries(styleObj)
-  //       .map(([key, value]) => `${key}: ${value}`)
-  //       .join('; ');
-  //   }
-  
-  //   $el.children('div').each((_, child) => {
-  //     convertDivs($(child)); // recurse first
-  //   });
-  
-  //   const children = $el.children();
-  //   const classAttr = $el.attr('class');
-  //   const tableStyle = $el.attr('style') ? ` style="${$el.attr('style')}"` : '';
-  
-  //   function getStyledTd(child) {
-  //     const $child = $(child);
-  //     const rawStyle = parseStyle($child.attr('style') || '');
-  //     const keepInChild = {};
-  //     const moveToTd = {};
-  
-  //     Object.entries(rawStyle).forEach(([key, value]) => {
-  //       if (KEEP_IN_CHILD.includes(key)) {
-  //         keepInChild[key] = value;
-  //       } else {
-  //         moveToTd[key] = value;
-  //       }
-  //     });
-  
-  //     // Apply cleaned styles
-  //     $child.attr('style', styleToString(keepInChild));
-  //     const tdStyleStr = styleToString(moveToTd);
-  //     return `<td${tdStyleStr ? ` style="${tdStyleStr}"` : ''}>${$.html($child)}</td>`;
-  //   }
-  
-  //   if ($el.hasClass('row')) {
-  //     const cells = children.map((_, child) => getStyledTd(child)).get().join('');
-  //     const table = `<table${tableStyle}><tr>${cells}</tr></table>`;
-  //     $el.replaceWith(table);
-  //   } else if ($el.hasClass('column')) {
-  //     const rows = children.map((_, child) => `<tr>${getStyledTd(child)}</tr>`).get().join('');
-  //     const table = `<table${tableStyle}>${rows}</table>`;
-  //     $el.replaceWith(table);
-  //   } else if (!classAttr) {
-  //     if (children.length <= 1) {
-  //       const content = children.length === 1 ? getStyledTd(children[0]) : '<td></td>';
-  //       const table = `<table${tableStyle}><tr>${content}</tr></table>`;
-  //       $el.replaceWith(table);
-  //     } else {
-  //       throw new Error(`Div without class has multiple children:\n${$.html($el)}`);
-  //     }
-  //   }
-  // }
-  
 
 
-
-  // Run conversion
+// Run conversion
   $('body div').each((_, el) => convertDivs($(el)));
-  
-  
+
+$('.row').removeClass('row');
+$('.column').removeClass('column');
   $("tr").attr(
     "style",
     "padding: 0px; margin: 0px; border-spacing: 0; font-size:0; mso-line-height-alt:0; mso-margin-top-alt:1px;"
@@ -270,51 +245,50 @@ function normalizeTables($root) {
 normalizeTables($('body')); 
 
 
-//   $('nl-comp').each((_, el) => {
-//     const innerContent = $(el).html(); // Preserve what's inside <nl-comp>
-//     console.log(innerContent);
+  $('nl-comp').each((_, el) => {
+    const innerContent = $(el).html(); // Preserve what's inside <nl-comp>
     
-//     const newHtml=`	<div align="center" style="width: ${width}px; margin: 0 auto; background-color: #ffffff;">
-// 		<table align="center" style="width: ${width}px; margin: 0 auto; border-collapse: collapse; border-spacing: 0px; border: 0px; background-color: #ffffff; background-position: initial; background-repeat: initial;" border="0" cellpadding="0" cellspacing="0" width="${width}">
-// 			<tbody>
-// 				<tr style="padding: 0px; margin: 0px; border-spacing: 0; font-size: 0; mso-line-height-alt: 0; mso-margin-top-alt: 1px;">
-// 					<td style="background-color: #ffffff; margin: 0;" align="center">
-// 						<table width="${width}" style="width: ${width}px; max-width: ${width}px; margin: 0 auto; border-collapse: collapse; border-spacing: 0px; border: 0px; background-position: initial; background-repeat: initial;" border="0" cellpadding="0" cellspacing="0">
-// 							<tbody>
-// 								<tr>
-// 									<td style="background-color: #ffffff; margin: 0; padding: 5px;" align="center">
-// 										<p style="text-align: center; font-size: 11px; font-family: 'Verdana', 'Arial'; color: #000000; margin: 5px; padding: 15px;">Wird diese Nachricht nicht richtig dargestellt, klicken Sie bitte <a style="font-weight: bold; text-decoration: none; color: #000000;" href="${hreftop}">hier</a>.</p>
-// 									</td>
-// 								</tr>
-// 							</tbody>
-// 						</table>
-// 					</td>
-// 				</tr>
-//         <tr style="padding: 0; margin: 0px; border-spacing: 0; font-size:0; mso-line-height-alt:0; mso-margin-top-alt:1px;">
-//           <td>
-//              ${innerContent}
-//           </td>
-//         </tr>
-//         <tr style="padding: 0px; margin: 0px; border-spacing: 0; font-size: 0; mso-line-height-alt: 0; mso-margin-top-alt: 1px;">
-// 					<td style="background-color: #ffffff; margin: 0;">
-// 						<table width="${width}" style="width: ${width}px; max-width: ${width}px; margin: 0 auto; border-collapse: collapse; border-spacing: 0px; border: 0px; background-position: initial; background-repeat: initial;" border="0" cellpadding="0" cellspacing="0">
-// 							<tbody>
-// 								<tr>
-// 									<td style="background-color: white; margin: 0; padding: 15px;">
-// 										<p style="text-align: center; font-size: 11px; line-height: 21px; font-family: 'Verdana', 'Arial'; color: #000000; margin: 5px; padding: 0;"><a style="font-weight: bold; text-decoration: none; color: #000000;" href="${impressum}${tracing}">Impressum</a></p>
-// 										<p style="text-align: center; font-size: 11px; font-family: 'Verdana', 'Arial'; color: #000000; margin: 5px; padding: 0;">Falls Sie keinen Newsletter mehr erhalten möchten, klicken Sie bitte auf <a style="font-weight: bold; text-decoration: none; color: #000000;" href="${hrefbottom}">diesen Link</a> und befolgen Sie die Anweisungen.</p>
-// 									</td>
-// 								</tr>
-// 							</tbody>
-// 						</table>
-// 					</td>
-// 				</tr>
-// 			</tbody>
-// 		</table>
-// 	</div>`;
-//   $(el).replaceWith(newHtml);
-// });
-  // $('nl-comp').remove();
+    const newHtml=`	<div align="center" style="width: ${width}px; margin: 0 auto; background-color: #ffffff;">
+		<table align="center" style="width: ${width}px; margin: 0 auto; border-collapse: collapse; border-spacing: 0px; border: 0px; background-color: #ffffff; background-position: initial; background-repeat: initial;" border="0" cellpadding="0" cellspacing="0" width="${width}">
+			<tbody>
+				<tr style="padding: 0px; margin: 0px; border-spacing: 0; font-size: 0; mso-line-height-alt: 0; mso-margin-top-alt: 1px;">
+					<td style="background-color: #ffffff; margin: 0;" align="center">
+						<table width="${width}" style="width: ${width}px; max-width: ${width}px; margin: 0 auto; border-collapse: collapse; border-spacing: 0px; border: 0px; background-position: initial; background-repeat: initial;" border="0" cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr>
+									<td style="background-color: #ffffff; margin: 0; padding: 5px;" align="center">
+										<p style="text-align: center; font-size: 11px; font-family: Verdana,Arial; color: #000000; margin: 5px; padding: 15px;">${lang=="de"?"Wird diese Nachricht nicht richtig dargestellt, klicken Sie bitte ":""}${lang=="en"?"If this message is not displayed properly, click ":""}${lang=="it"?"Se non riesci a visualizzare correttamente questa e-mail, clicca ":""} <a style="font-weight: bold; text-decoration: none; color: #000000;" href="${hreftop}">${lang=="de"?"hier":""}${lang=="en"?"here":""}${lang=="it"?"qui":""}</a>${lang=="en"?"please":""}.</p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+        <tr style="padding: 0; margin: 0px; border-spacing: 0; font-size:0; mso-line-height-alt:0; mso-margin-top-alt:1px;">
+          <td width="${width}" style="background-color: #ffffff; margin: 0; padding: 0; width: ${width}px; max-width: ${width}px;" align="center">
+             ${innerContent}
+          </td>
+        </tr>
+        <tr style="padding: 0px; margin: 0px; border-spacing: 0; font-size: 0; mso-line-height-alt: 0; mso-margin-top-alt: 1px;">
+					<td style="background-color: #ffffff; margin: 0;">
+						<table width="${width}" style="width: ${width}px; max-width: ${width}px; margin: 0 auto; border-collapse: collapse; border-spacing: 0px; border: 0px; background-position: initial; background-repeat: initial;" border="0" cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr>
+									<td style="background-color: white; margin: 0; padding: 15px;">
+										<p style="text-align: center; font-size: 11px; line-height: 21px; font-family: Verdana, Arial; color: #000000; margin: 5px; padding: 0;"><a style="font-weight: bold; text-decoration: none; color: #000000;" href="${impressum}${tracing}">${lang=="de"?"Impressum":"Colophon"}</a></p>
+										<p style="text-align: center; font-size: 11px; font-family: Verdana, Arial; color: #000000; margin: 5px; padding: 0;">${lang=="de"?"Falls Sie keinen Newsletter mehr erhalten möchten, klicken Sie bitte auf ":""}${lang=="it"?"Se non riesci a visualizzare correttamente questa e-mail, clicca ":""}${lang=="en"?"You can always unsubscribe yourself from our newsletter list. Please click on ":""}<a style="font-weight: bold; text-decoration: none; color: #000000;" href="${hrefbottom}">${lang=="de"?"diesen Link":""}${lang=="en"?"this link":""}${lang=="it"?"questo link":""}</a> ${lang=="de"?"und befolgen Sie die Anweisungen":""}${lang=="en"?"and follow the instructions":""}${lang=="it"?"e segui le istruzioni":""}.</p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>`;
+  $(el).replaceWith(newHtml);
+});
+  $('nl-comp').remove();
   function applyBackgroundColor($, excludedElements = []) {
     
     function propagateBackgroundColor(element, parentBgColor) {
