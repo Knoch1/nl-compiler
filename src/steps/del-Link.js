@@ -87,7 +87,13 @@ function transformHtml($) {
 //     $el.replaceWith(table);
 //   }
 // }
-function convertDivs($el) {
+function convertAllDivs($root) {
+  const divs = $root.find('div').addBack('div').get().reverse(); // Get all divs, innermost first
+
+  divs.forEach(div => convertDiv($(div)));
+}
+
+function convertDiv($el) {
   const TD_STYLES = [
     'padding', 'color', 'font-size', 'line-height', 'text-align', 'vertical-align',
     'font-family', 'text-decoration', 'font-weight', 'height', 'width', 'border'
@@ -96,11 +102,8 @@ function convertDivs($el) {
 
   const classAttr = $el.attr('class') || '';
   const styleAttr = $el.attr('style') || '';
-  const children = $el.contents(); // includes elements, text, comments
-  const elementChildren = $el.children(); // just element nodes
-
-  // Recursively convert nested divs
-  $el.children('div').each((_, child) => convertDivs($(child)));
+  const children = $el.contents();
+  const elementChildren = $el.children();
 
   const tableStyles = extractStyles(styleAttr, TABLE_STYLES);
   const tdBaseStyles = extractStyles(styleAttr, TD_STYLES);
@@ -152,20 +155,16 @@ function convertDivs($el) {
   let tableHtml = '';
 
   if ($el.hasClass('row')) {
-    const tds = children.toArray().map(wrapInTd).join('');
+    const tds = children.toArray().filter(n => n.type === 'tag').map(wrapInTd).join('');
     tableHtml = `<table${tableStyleAttr}>${wrapInTr(tds)}</table>`;
   } else if ($el.hasClass('column')) {
-    const rows = children.toArray().map(child => wrapInTr(wrapInTd(child))).join('');
+    const rows = children.toArray().filter(n =>n.type === 'tag' ||(n.type === 'text' && n.data.trim() !== '') ||n.type === 'comment').map(child => wrapInTr(wrapInTd(child))).join('');
     tableHtml = `<table${tableStyleAttr}>${rows}</table>`;
-  } else if (!classAttr) {
-    if (elementChildren.length <= 1) {
-      const content = elementChildren.length === 1
-        ? wrapInTd(elementChildren[0])
-        : `<td${tdClassAttr}></td>`;
-      tableHtml = `<table${tableStyleAttr}>${wrapInTr(content)}</table>`;
-    } else {
-      throw new Error(`Div without class has multiple children:\n${$.html($el)}`);
-    }
+  } else {
+    // const content = children.length === 1
+    //   ? wrapInTd(children)
+    //   : `<td${tdClassAttr}></td>`;
+    tableHtml = `<table${tableStyleAttr}>${wrapInTr(wrapInTd(children))}</table>`;
   }
 
   if (tableHtml) {
@@ -173,13 +172,13 @@ function convertDivs($el) {
   }
 }
 
-
+convertAllDivs($('body'));
 
 
 
 
 // Run conversion
-  $('body div').each((_, el) => convertDivs($(el)));
+  // $('body div').each((_, el) => convertDivs($(el)));
 
 $('.row').removeClass('row');
 $('.column').removeClass('column');
