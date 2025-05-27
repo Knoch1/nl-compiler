@@ -299,6 +299,24 @@ normalizeTables($('body'));
   $(el).replaceWith(newHtml);
 });
   $('nl-comp').remove();
+
+
+   $('img').each((_, img) => {
+    const oldSrc = $(img).attr('src');
+    if (oldSrc && oldSrc.startsWith('$')) {
+      const newSrc = src + oldSrc.slice(1);
+      $(img).attr('src', newSrc);
+    }
+  });
+
+
+  $('a').each((_, a) => {
+    const oldhref = $(a).attr('href');
+    if (oldhref && oldhref.startsWith('$')) {
+      const newhref = href + oldhref.slice(1);
+      $(a).attr('href', newhref);
+    }
+  });
   function applyBackgroundColor($, excludedElements = []) {
     
     function propagateBackgroundColor(element, parentBgColor) {
@@ -319,7 +337,7 @@ normalizeTables($('body'));
     
     $('body').children().each((_, element) => propagateBackgroundColor(element, null));
   }
-  applyBackgroundColor($,['br','tr','tbody','span'])
+  applyBackgroundColor($,['br','tr','tbody','span','img'])
   return $.html();
 }
 
