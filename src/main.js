@@ -1,7 +1,7 @@
 // main.js (or extension.js)
 
 const vscode = require('vscode');
-const { transformHtml } = require('./steps/del-Link'); // Import the transformation function
+const { transformHtml } = require('./steps/main-step'); // Import the transformation function
 const beautify = require('js-beautify').html;
 const cheerio = require('cheerio');
 /**
@@ -32,42 +32,3 @@ async function compile(doc) {
 module.exports = {
   compile
 };
-
-
-// const vscode = require('vscode');
-// const cheerio = require('cheerio');
-
-// /**
-//  * Called on save of a `.nl.html` file
-//  * @param {vscode.TextDocument} doc
-//  */
-// async function transformNlHtml(doc) {
-//   const filePath = doc.fileName;
-//   const originalHtml = doc.getText();
-//   const newFilePath = filePath.replace(/\.nl\.html$/, '.html');
-
-//   const $ = cheerio.load(originalHtml);
-
-//   // 🧪 Example transformation
-//   $('nl-comp').each((_, el) => {
-//     const src = $(el).attr('src') || 'default-src';
-//     $(el).replaceWith(`<div>Component from "${src}"</div>`);
-//   });
-
-//   try {
-//     const newHtmlContent = $.html();
-//     const newUri = vscode.Uri.file(newFilePath);
-//     const newBuffer = Buffer.from(newHtmlContent, 'utf8');
-    
-//     // Use VS Code API to write the transformed HTML to the new file
-//     await vscode.workspace.fs.writeFile(newUri, newBuffer);
-//     vscode.window.showInformationMessage(`File saved: ${newFilePath}`);
-//   } catch (err) {
-//     vscode.window.showErrorMessage(`Failed to save transformed file: ${err.message}`);
-//   }
-// }
-
-// module.exports = {
-//   transformNlHtml
-// };
-
