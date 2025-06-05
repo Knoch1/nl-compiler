@@ -1,5 +1,5 @@
 
-function transformAllImgTags($) {
+function convertImages($) {
   $('img').each((_, el) => {
     const img = $(el);
 
@@ -33,4 +33,4 @@ function transformAllImgTags($) {
     .join('; ') + ';';
 }
 }
-module.exports = {transformAllImgTags};
+module.exports = {convertImages};

@@ -1,6 +1,6 @@
 // const {createheader} = require('./create-header');
 const { convertAllDivs } = require('./convert-div');
-const { convertImages} = require('./convert-img');
+const { convertImages } = require('./convert-img');
 const { nlcomp } = require('./nl-comp');
 const { replaceSrcHref } = require('./src-and-href');
 const { applyBackgroundColor } = require('./background-color');
@@ -29,11 +29,7 @@ function transformHtml($) {
   const lang = nlcompData('lang');
   
   convertAllDivs($,$('body'));
-
   temp($);
-
-
-
   convertImages($);
   normalizeTables($,$('body')); 
   replaceSrcHref($,src,href);
