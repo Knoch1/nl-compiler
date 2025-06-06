@@ -1,6 +1,5 @@
 function convertAllDivs($, $root) {
   const divs = $root.find('div').addBack('div').get().reverse(); // Get all divs, innermost first
-
   divs.forEach(div => convertDiv($, $(div)));
 }
 
@@ -14,14 +13,12 @@ function convertDiv($, $el) {
   const classAttr = $el.attr('class') || '';
   const styleAttr = $el.attr('style') || '';
   const children = $el.contents();
-//   const elementChildren = $el.children();
 
   const tableStyles = extractStyles(styleAttr, TABLE_STYLES);
   const tdBaseStyles = extractStyles(styleAttr, TD_STYLES);
 
   const tableStyleAttr = tableStyles ? ` style="${tableStyles}"` : '';
-  const tdClassAttr = getTdClassAttr(classAttr);
-  const extraTdClass = getExtraTdClass(classAttr);
+  const tableClassAttr = classAttr ? ` class="${classAttr}"` : '';
 
   function extractStyles(styleStr, allowedProps) {
     return (styleStr || '')
@@ -30,20 +27,6 @@ function convertDiv($, $el) {
       .filter(Boolean)
       .filter(s => allowedProps.includes(s.split(':')[0].trim()))
       .join('; ');
-  }
-
-  function getTdClassAttr(classStr) {
-    return classStr.includes('row') || classStr.includes('column')
-      ? ` class="${classStr}"`
-      : '';
-  }
-
-  function getExtraTdClass(classStr) {
-    const extra = classStr
-      .split(' ')
-      .filter(c => !['row', 'column'].includes(c))
-      .join(' ');
-    return extra ? ` class="${extra}"` : '';
   }
 
   function wrapInTd(child) {
@@ -56,7 +39,7 @@ function convertDiv($, $el) {
       .join('; ');
     const styleAttr = tdStyles ? ` style="${tdStyles}"` : '';
 
-    return `<td${tdClassAttr}${extraTdClass}${styleAttr}>${$.html(child)}</td>`;
+    return `<td${styleAttr}>${$.html(child)}</td>`;
   }
 
   function wrapInTr(tdContent) {
@@ -67,15 +50,16 @@ function convertDiv($, $el) {
 
   if ($el.hasClass('row')) {
     const tds = children.toArray().filter(n => n.type === 'tag').map(wrapInTd).join('');
-    tableHtml = `<table${tableStyleAttr}>${wrapInTr(tds)}</table>`;
+    tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${wrapInTr(tds)}</table>`;
   } else if ($el.hasClass('column')) {
-    const rows = children.toArray().filter(n =>n.type === 'tag' ||(n.type === 'text' && n.data.trim() !== '') ||n.type === 'comment').map(child => wrapInTr(wrapInTd(child))).join('');
-    tableHtml = `<table${tableStyleAttr}>${rows}</table>`;
+    const rows = children.toArray()
+      .filter(n => n.type === 'tag' || (n.type === 'text' && n.data.trim() !== '') || n.type === 'comment')
+      .map(child => wrapInTr(wrapInTd(child)))
+      .join('');
+    tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${rows}</table>`;
   } else {
-    // const content = children.length === 1
-    //   ? wrapInTd(children)
-    //   : `<td${tdClassAttr}></td>`;
-    tableHtml = `<table${tableStyleAttr}>${wrapInTr(wrapInTd(children))}</table>`;
+    const content = wrapInTd(children);
+    tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${wrapInTr(content)}</table>`;
   }
 
   if (tableHtml) {
@@ -83,4 +67,7 @@ function convertDiv($, $el) {
   }
 }
 
-module.exports = { convertAllDivs }; 
+module.exports = { convertAllDivs };
+
+
+

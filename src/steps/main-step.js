@@ -29,18 +29,18 @@ function transformHtml($) {
   const lang = nlcompData('lang');
   
   convertAllDivs($,$('body'));
-  temp($);
-  convertImages($);
-  normalizeTables($,$('body')); 
-  replaceSrcHref($,src,href);
+  // temp($);
+  // convertImages($);
+  // normalizeTables($,$('body')); 
+  // replaceSrcHref($,src,href);
 
-  if(compiletype==='nl-comp'){
-    nlcomp($,width,lang,impressum,tracing,hrefbottom,hreftop);
-    $(compiletype).remove();
-  }
+  // if(compiletype==='nl-comp'){
+  //   nlcomp($,width,lang,impressum,tracing,hrefbottom,hreftop);
+  //   $(compiletype).remove();
+  // }
 
 
-  applyBackgroundColor($,['br','tr','tbody','span','img'])
+  // applyBackgroundColor($,['br','tr','tbody','span','img'])
   return $.html();
 }
 
