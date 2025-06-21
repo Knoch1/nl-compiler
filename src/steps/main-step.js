@@ -3,9 +3,9 @@ const { convertAllDivs } = require('./convert-div');
 const { convertImages } = require('./convert-img');
 const { nlcomp } = require('./nl-comp');
 const { replaceSrcHref } = require('./src-and-href');
-const { applyBackgroundColor } = require('./background-color');
 const { temp } = require('./temp');
 const { normalizeTables } = require('./normalizeTable');
+const { applyBackgroundColor } = require('./background-color');
 function transformHtml($) {
   // Example transformation: Modify <nl-comp> tags
   let compiletype = '';
@@ -29,18 +29,19 @@ function transformHtml($) {
   const lang = nlcompData('lang');
   
   convertAllDivs($,$('body'));
-  // temp($);
-  // convertImages($);
-  // normalizeTables($,$('body')); 
-  // replaceSrcHref($,src,href);
+  temp($);
+  convertImages($);
+  normalizeTables($,$('body')); 
+  console.log("Test2");
+  
+  if(compiletype==='nl-comp'){
+    nlcomp($,width,lang,impressum,tracing,hrefbottom,hreftop);
+    $(compiletype).remove();
+  }
+  replaceSrcHref($,src,href,tracing);
 
-  // if(compiletype==='nl-comp'){
-  //   nlcomp($,width,lang,impressum,tracing,hrefbottom,hreftop);
-  //   $(compiletype).remove();
-  // }
 
-
-  // applyBackgroundColor($,['br','tr','tbody','span','img'])
+  applyBackgroundColor($,['br','tr','tbody','span','img'])
   return $.html();
 }
 

@@ -20,7 +20,7 @@ async function compile(doc) {
   const formattedHtml = beautify(transformedHtml, { // ✅ Use transformedHtml here
     indent_size: 4,
     max_preserve_newlines: 1,
-    preserve_newlines: true,
+    preserve_newlines: false,
   });
 
   const newBuffer = Buffer.from(formattedHtml, 'utf8');

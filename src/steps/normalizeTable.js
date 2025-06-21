@@ -39,5 +39,6 @@ function normalizeTables($,$root) {
 
       $table.attr('style', newStyleStr);
     });
+
   }
   module.exports = {normalizeTables};
