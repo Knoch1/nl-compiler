@@ -6,6 +6,7 @@ const { replaceSrcHref } = require('./src-and-href');
 const { temp } = require('./temp');
 const { normalizeTables } = require('./normalizeTable');
 const { applyBackgroundColor } = require('./background-color');
+const { applyInheritedTextStyles } = require('./fontstyling');
 function transformHtml($) {
   // Example transformation: Modify <nl-comp> tags
   let compiletype = '';
@@ -29,6 +30,7 @@ function transformHtml($) {
   const lang = nlcompData('lang');
   
   convertAllDivs($,$('body'));
+  applyInheritedTextStyles($);
   temp($);
   convertImages($);
   normalizeTables($,$('body')); 
@@ -44,5 +46,13 @@ function transformHtml($) {
   applyBackgroundColor($,['br','tr','tbody','span','img'])
   return $.html();
 }
+
+
+
+
+
+
+
+
 
 module.exports = { transformHtml }; 

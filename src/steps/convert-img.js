@@ -31,6 +31,25 @@ function convertImages($) {
   return Object.entries(styleMap)
     .map(([k, v]) => `${k}: ${v}`)
     .join('; ') + ';';
-}
+  }
+    $('img').each((_, el) => {
+    const $img = $(el);
+    const style = $img.attr('style') || '';
+
+    // Skip if already has width/height attributes
+    const hasWidthAttr = $img.attr('width');
+    const hasHeightAttr = $img.attr('height');
+
+    const widthMatch = style.match(/max-width\s*:\s*(\d+)px/i);
+    const heightMatch = style.match(/(?:height|max-height)\s*:\s*(\d+)px/i);
+
+    if (widthMatch && !hasWidthAttr) {
+      $img.attr('width', widthMatch[1]);
+    }
+
+    if (heightMatch && !hasHeightAttr) {
+      $img.attr('height', heightMatch[1]);
+    }
+  });
 }
 module.exports = {convertImages};
