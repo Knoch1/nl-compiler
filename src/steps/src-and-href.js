@@ -1,27 +1,22 @@
-
-
-function replaceSrcHref($,src,href,tracing) {
-   $('img').each((_, img) => {
-    const oldSrc = $(img).attr('src');
-    if (oldSrc && oldSrc.startsWith('$')) {
+function replaceSrcHref($, src, href, tracing) {
+  $("img").each((_, img) => {
+    const oldSrc = $(img).attr("src");
+    if (oldSrc && oldSrc.startsWith("$")) {
       const newSrc = src + oldSrc.slice(1);
-      $(img).attr('src', newSrc);
+      $(img).attr("src", newSrc);
     }
   });
-  console.log("Test")
-
-  $('a').each((_, a) => {
-    const oldhref = $(a).attr('href');
-    if (oldhref && oldhref.startsWith('$')) {
+  $("a").each((_, a) => {
+    const oldhref = $(a).attr("href");
+    if (oldhref && oldhref.startsWith("$")) {
       const newhref = href + oldhref.slice(1);
-      $(a).attr('href', newhref);
+      $(a).attr("href", newhref);
     }
-     const oldhref2 = $(a).attr('href');
-    if (oldhref2 && oldhref2.endsWith('$')) {
+    const oldhref2 = $(a).attr("href");
+    if (oldhref2 && oldhref2.endsWith("$")) {
       const newhref2 = oldhref2.slice(0, -1) + tracing;
-      console.log(`link:  ${newhref2} cut: ${oldhref2.slice(0,-1)}`);
-      $(a).attr('href', newhref2);
+      $(a).attr("href", newhref2);
     }
   });
 }
-module.exports = {replaceSrcHref};
+module.exports = { replaceSrcHref };
