@@ -53,5 +53,72 @@ function convertImages($) {
       $img.attr("height", heightMatch[1]);
     }
   });
+    $("img.logo").each((_, img) => {
+    const $img = $(img);
+    const $td = $img.closest("td");
+    const $tdParent = $td.parent().closest("td");
+    const $table = $td.closest("table");
+
+    if (!$td.length || !$tdParent.length || !$table.length) return;
+
+    // Get and remove padding from the td with the image
+    const tdStyle = parseStyle($td.attr("style") || "");
+    const padding = tdStyle["padding"];
+    delete tdStyle["padding"];
+
+    // Enforce required styles on the <td> with the <img>
+    tdStyle["margin"] = "0 auto";
+    tdStyle["line-height"] = "0px";
+    tdStyle["text-align"] = "center";
+    $td.attr("style", styleString(tdStyle));
+
+    // Add padding to parent <td>
+    if (padding) {
+      const parentStyle = parseStyle($tdParent.attr("style") || "");
+      parentStyle["padding"] = padding;
+      $tdParent.attr("style", styleString(parentStyle));
+    }
+
+    // Add align="center" to parent td and the table
+    $tdParent.attr("align", "center");
+    $table.attr("align", "center");
+
+    // Extract image width from attribute or inline style
+    let imgWidth =
+      $img.attr("width") || parseStyle($img.attr("style") || "")["width"];
+    if (!imgWidth) imgWidth = "600px"; // fallback
+
+    // Normalize to numeric px if necessary
+    const widthNum = parseInt(imgWidth, 10);
+    if (!isNaN(widthNum)) {
+      $table.attr("width", widthNum);
+      const tableStyle = parseStyle($table.attr("style") || "");
+      tableStyle["width"] = `${widthNum}px`;
+      tableStyle["max-width"] = `${widthNum}px`;
+      $table.attr("style", styleString(tableStyle));
+    }
+  });
+
+  function styleString(obj) {
+    return Object.entries(obj)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join("; ");
+  }
+  function parseStyle(styleStr) {
+    const styles = {};
+    styleStr.split(";").forEach((rule) => {
+      const [prop, val] = rule.split(":").map((s) => s && s.trim());
+      if (prop && val) styles[prop] = val;
+    });
+    return styles;
+  }
+    $("img.image-100").each((_, img) => {
+    const $img = $(img);
+    const $td = $img.closest("td");
+
+    if ($td.length && !$td.hasClass("image-100")) {
+      $td.addClass("image-100");
+    }
+  });
 }
 module.exports = { convertImages };

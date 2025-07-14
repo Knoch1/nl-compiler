@@ -2,6 +2,7 @@ const postcss = require('postcss');
 const he = require('he'); // HTML Entities decoder (npm install he)
 
 function extractAndDecodeStyleTags($) {
+	
 	let decodedCss = '';
 	$('style').each((_, el) => {
 		const raw = $(el).html();

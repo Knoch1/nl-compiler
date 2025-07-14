@@ -3,7 +3,7 @@ const { init } = require('./src/init');
 const { compile } = require('./src/main');
 
 function activate(context) {
-  const watcher = vscode.workspace.createFileSystemWatcher('**/*.nl.html');
+  const watcher = vscode.workspace.createFileSystemWatcher('**/config-*.nl.html');
   watcher.onDidCreate((uri) => {
     init(uri);
   });

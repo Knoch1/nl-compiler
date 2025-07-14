@@ -1,5 +1,5 @@
 
-function buttonModule ($){
+function buttonModule ($, Dhref){
  	$('table.button').each((_, table) => {
 		const $table = $(table);
 		const $parentTd = $table.closest('td');
@@ -11,12 +11,12 @@ function buttonModule ($){
 		const tableStyles = parseStyle($table.attr('style') || '');
 		const tdStyles = parseStyle($innerTd.attr('style') || '');
 
-		const href = $table.attr('href') || 'link';
+		const href = $table.attr('href') || Dhref;
 		const title = $table.attr('title') || $innerTd.text().trim();
 		const buttonText = $innerTd.text().trim();
 
 		const backgroundColor = tableStyles['background-color'];
-		const border = tableStyles['border'];
+		const border = tableStyles['border']||`1px solid ${backgroundColor}`;
 		const fontSize = tdStyles['font-size'];
 		const fontFamily = tdStyles['font-family'];
 		const color = tdStyles['color'];
@@ -24,13 +24,13 @@ function buttonModule ($){
 		const textAlign = tdStyles['text-align'];
 		const padding = tdStyles['padding'];
 
-		const borderRadius = tableStyles['border-radius'];
+		const borderRadius = tableStyles['border-radius'] || '0px';
 		const borderCollapse = borderRadius ? 'separate' : 'collapse';
 		const borderRadiusStyle = borderRadius ? `border-radius: ${borderRadius};` : '';
 
 		// Calculate adjusted padding if border exists
 		let adjustedPadding = padding;
-		if (padding && border) {
+		if (padding && !tableStyles['border']) {
 		const matchBorder = border.match(/^(\d+)px/);
 		const borderWidth = matchBorder ? parseInt(matchBorder[1], 10) : 0;
 
@@ -56,15 +56,15 @@ function buttonModule ($){
 		// Build the full replacement <td>
 		const replacement = `
 		<td style="margin: 0 auto; text-align: ${textAlign};">
-		<table class="button" border="0" cellpadding="0" cellspacing="0" style="display: inline-table; margin: 0 auto; padding: 0; border-collapse: collapse; border: 0; text-align: center;">
+		<table class="button" border="0" cellpadding="0" cellspacing="0" style="display: inline-table; margin: 0 auto; padding: 0; border-collapse: collapse; border: 0; text-align: ${textAlign};">
 			<tr style="padding: 0; margin: 0; border-spacing: 0; font-size: 0; mso-line-height-alt: 0; mso-margin-top-alt: 1px;">
-			<td style="padding: 0; margin: 0 auto; text-align: center;">
-				<table align="center" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0 auto; background-color: ${backgroundColor}; border-collapse: ${borderCollapse}; border: ${border}; ${borderRadiusStyle}">
+			<td style="padding: 0; margin: 0 auto; text-align: ${textAlign};">
+				<table align="${textAlign}" width="100%" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0 auto; background-color: ${backgroundColor}; border-collapse: ${borderCollapse}; border: ${border}; ${borderRadiusStyle}">
 				<tr style="padding: 0; margin: 0; border-spacing: 0; font-size: 0; mso-line-height-alt: 0; mso-margin-top-alt: 1px;">
-					<td align="center" style="height: ${height}; mso-line-height-rule: exactly; line-height: ${height}; font-size: ${fontSize}; padding: ${adjustedPadding}; margin: 0 auto; color: ${color}; text-decoration: none; text-align: ${textAlign}; background-color: ${backgroundColor}; border: ${border}; ${borderRadiusStyle}">
-					<p style="font-size: ${fontSize}; mso-line-height-rule: exactly; line-height: ${height}; color: ${color}; font-family: ${fontFamily}; margin: 0; padding: 0; text-align: ${textAlign};">
+					<td align="${textAlign}" style="height: ${height}; mso-line-height-rule: exactly; line-height: ${height}; font-size: ${fontSize}; padding: ${adjustedPadding}; margin: 0 auto; color: ${color}; text-decoration: none; text-align: ${textAlign}; background-color: ${backgroundColor}; border: ${border}; ${borderRadiusStyle}">
+					<p style="font-size: ${fontSize}; mso-line-height-rule: exactly; line-height: ${height}; color: ${color}; font-family: ${fontFamily}; margin: 0; padding: 0; text-align: center;">
 						<!--#text_line#-->
-						<a href="${href}" style="width: 100%; height: auto; min-height: ${height}; font-size: ${fontSize}; mso-line-height-rule: exactly; line-height: ${height}; color: ${color}; font-family: ${fontFamily}; font-weight: 400; text-decoration: none; display: block;" target="_blank" title="${title}">
+						<a class="more" href="${href}" style="width: 100%; height: auto; min-height: ${height}; font-size: ${fontSize}; mso-line-height-rule: exactly; line-height: ${height}; color: ${color}; font-family: ${fontFamily}; font-weight: 400; text-decoration: none; display: block;" target="_blank" title="${title}">
 						<span style="font-size: ${fontSize}; color: ${color}; text-decoration: none;">${buttonText}</span>
 						</a>
 						<!--#/text_line#-->

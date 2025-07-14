@@ -1,78 +1,3 @@
-// function convertAllDivs($, $root) {
-//   const divs = $root.find('div').addBack('div').get().reverse(); // Get all divs, innermost first
-//   divs.forEach(div => convertDiv($, $(div)));
-// }
-
-// function convertDiv($, $el) {
-//   const TD_STYLES = [
-//     'padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right', 'color', 'font-size', 'line-height', 'text-align', 'vertical-align',
-//     'font-family', 'text-decoration', 'font-weight', 'height', 'width'
-//   ];
-//   const TABLE_STYLES = ['background-color', 'margin', 'display', 'border-collapse', 'border', 'max-width'];
-
-//   const classAttr = $el.attr('class') || '';
-//   const styleAttr = $el.attr('style') || '';
-//   const children = $el.contents();
-
-//   const tableStyles = extractStyles(styleAttr, TABLE_STYLES);
-//   const tdBaseStyles = extractStyles(styleAttr, TD_STYLES);
-
-//   const tableStyleAttr = tableStyles ? ` style="${tableStyles}"` : '';
-//   const tableClassAttr = classAttr ? ` class="${classAttr}"` : '';
-
-//   function extractStyles(styleStr, allowedProps) {
-//     return (styleStr || '')
-//       .split(';')
-//       .map(s => s.trim())
-//       .filter(Boolean)
-//       .filter(s => allowedProps.includes(s.split(':')[0].trim()))
-//       .join('; ');
-//   }
-
-//   function wrapInTd(child) {
-//     if (child.type === 'comment') return `<!--${child.data}-->`;
-//     if (!child) return '<td></td>';
-//     console.log(child);
-
-//     const $child = $(child);
-//     const childStyle = $child.attr('style') || '';
-//     const tdStyles = [tdBaseStyles, extractStyles(childStyle, TD_STYLES)]
-//       .filter(Boolean)
-//       .join('; ');
-//     const styleAttr = tdStyles ? ` style="${tdStyles}"` : '';
-
-//     return `<td${styleAttr}>${$.html(child)}</td>`;
-//   }
-
-//   function wrapInTr(tdContent) {
-//     return `<tr>${tdContent}</tr>`;
-//   }
-
-//   let tableHtml = '';
-
-//   if ($el.hasClass('row')) {
-//     const tds = children.toArray().filter(n => n.type === 'tag').map(wrapInTd).join('');
-//     tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${wrapInTr(tds)}</table>`;
-//   } else if ($el.hasClass('column')) {
-//     const rows = children.toArray()
-//       .filter(n => n.type === 'tag' || (n.type === 'text' && n.data.trim() !== '') || n.type === 'comment')
-//       .map(child => wrapInTr(wrapInTd(child)))
-//       .join('');
-//     tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${rows}</table>`;
-//   } else {
-//     const content = wrapInTd(children);
-//     tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${wrapInTr(content)}</table>`;
-//     console.log("Content test");
-
-//   }
-
-//   if (tableHtml) {
-//     $el.replaceWith(tableHtml);
-//   }
-// }
-
-// module.exports = { convertAllDivs };
-
 function convertAllDivs($, $root) {
   const divs = $root.find("div").addBack("div").get().reverse(); // Get all divs, innermost first
   divs.forEach((div) => convertDiv($, $(div)));
@@ -110,7 +35,8 @@ function convertDiv($, $el) {
   const classAttr = $el.attr("class") || "";
   const styleAttr = $el.attr("style") || "";
   const children = $el.contents();
-
+  const hrefAttr = $el.attr('href')? ` href="${$el.attr('href')}"` : '';
+  const titleAttr = $el.attr('title')? ` title="${$el.attr('title')}"` : '';
   const combinedStyles = extractStyles(styleAttr, ALL_STYLES);
   const tableStyleAttr = combinedStyles ? ` style="${combinedStyles}"` : "";
   const tableClassAttr = classAttr ? ` class="${classAttr}"` : "";
@@ -143,7 +69,7 @@ function convertDiv($, $el) {
       .filter((n) => n.type === "tag")
       .map(wrapInTd)
       .join("");
-    tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${wrapInTr(
+    tableHtml = `<table${tableClassAttr}${tableStyleAttr}${hrefAttr}${titleAttr}>${wrapInTr(
       tds
     )}</table>`;
   } else if ($el.hasClass("column")) {
@@ -157,10 +83,10 @@ function convertDiv($, $el) {
       )
       .map((child) => wrapInTr(wrapInTd(child)))
       .join("");
-    tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${rows}</table>`;
+    tableHtml = `<table${tableClassAttr}${tableStyleAttr}${hrefAttr}${titleAttr}>${rows}</table>`;
   } else {
     const content = wrapInTd(children);
-    tableHtml = `<table${tableClassAttr}${tableStyleAttr}>${wrapInTr(
+    tableHtml = `<table${tableClassAttr}${tableStyleAttr}${hrefAttr}${titleAttr}>${wrapInTr(
       content
     )}</table>`;
   }
@@ -298,3 +224,95 @@ function moveTableTextStylesToTd($, $root) {
 }
 
 module.exports = { convertAllDivs };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function convertAllDivs($, $root) {
+//   const divs = $root.find('div').addBack('div').get().reverse(); // Get all divs, innermost first
+//   divs.forEach(div => convertDiv($, $(div)));
+// }
+
+// function convertDiv($, $el) {
+//   const TD_STYLES = [
+//     'padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right', 'color', 'font-size', 'line-height', 'text-align', 'vertical-align',
+//     'font-family', 'text-decoration', 'font-weight', 'height', 'width'
+//   ];
+//   const TABLE_STYLES = ['background-color', 'margin', 'display', 'border-collapse', 'border', 'max-width'];
+
+//   const classAttr = $el.attr('class') || '';
+//   const styleAttr = $el.attr('style') || '';
+//   const hrefAttr = $el.attr('href')? `href:${$el.attr('href')}` : '';
+//   const titleAttr = $el.attr('title')? `title:${$el.attr('title')}` : '';
+//   const children = $el.contents();
+
+//   const tableStyles = extractStyles(styleAttr, TABLE_STYLES);
+//   const tdBaseStyles = extractStyles(styleAttr, TD_STYLES);
+
+//   const tableStyleAttr = tableStyles ? ` style="${tableStyles}"` : '';
+//   const tableClassAttr = classAttr ? ` class="${classAttr}"` : '';
+
+//   function extractStyles(styleStr, allowedProps) {
+//     return (styleStr || '')
+//       .split(';')
+//       .map(s => s.trim())
+//       .filter(Boolean)
+//       .filter(s => allowedProps.includes(s.split(':')[0].trim()))
+//       .join('; ');
+//   }
+
+//   function wrapInTd(child) {
+//     if (child.type === 'comment') return `<!--${child.data}-->`;
+//     if (!child) return '<td></td>';
+//     console.log(child);
+
+//     const $child = $(child);
+//     const childStyle = $child.attr('style') || '';
+//     const tdStyles = [tdBaseStyles, extractStyles(childStyle, TD_STYLES)]
+//       .filter(Boolean)
+//       .join('; ');
+//     const styleAttr = tdStyles ? ` style="${tdStyles}"` : '';
+
+//     return `<td${styleAttr}>${$.html(child)}</td>`;
+//   }
+
+//   function wrapInTr(tdContent) {
+//     return `<tr>${tdContent}</tr>`;
+//   }
+
+//   let tableHtml = '';
+
+//   if ($el.hasClass('row')) {
+//     const tds = children.toArray().filter(n => n.type === 'tag').map(wrapInTd).join('');
+//     tableHtml = `<table${tableClassAttr}${tableStyleAttr}${hrefAttr}>${wrapInTr(tds)}</table>`;
+//   } else if ($el.hasClass('column')) {
+//     const rows = children.toArray()
+//       .filter(n => n.type === 'tag' || (n.type === 'text' && n.data.trim() !== '') || n.type === 'comment')
+//       .map(child => wrapInTr(wrapInTd(child)))
+//       .join('');
+//     tableHtml = `<table${tableClassAttr}${tableStyleAttr}${hrefAttr}${titleAttr}>${rows}</table>`;
+//   } else {
+//     const content = wrapInTd(children);
+//     tableHtml = `<table${tableClassAttr}${tableStyleAttr}${hrefAttr}${titleAttr}>${wrapInTr(content)}</table>`;
+//   }
+
+//   if (tableHtml) {
+//     $el.replaceWith(tableHtml);
+//   }
+// }
+
+// module.exports = { convertAllDivs };

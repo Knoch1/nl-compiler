@@ -78,5 +78,20 @@ function lineModule ($){
 		// Default to solid if only width/color given
 		return `1px solid ${borderValue.split(' ').pop()}`;
 	}
+	  $("table.line").each((_, table) => {
+    const $table = $(table);
+    const $outerTd = $table.closest("td");
+
+    if ($outerTd.length) {
+      const style = $outerTd.attr("style") || "";
+      const newStyle = style
+        .split(";")
+        .map((s) => s.trim())
+        .filter((s) => s && !s.toLowerCase().startsWith("width:"))
+        .join("; ");
+
+      $outerTd.attr("style", newStyle);
+    }
+  });
 }
 module.exports = {lineModule}

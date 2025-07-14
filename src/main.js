@@ -16,7 +16,9 @@ const he = require('he');
 async function compile(doc) {
 	const filePath = doc.fileName;
 	const originalHtml = doc.getText();
-	const newFilePath = filePath.replace(/\.nl\.html$/, '.html');
+	const newFilePath = filePath
+	.replace(/\.nl\.html$/, '.html')
+	.replace(/config/, 'template');
 
 	const $ = cheerio.load(originalHtml, { xmlMode: true });
 	const transformedHtml = transformHtml($, originalHtml);
