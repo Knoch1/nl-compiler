@@ -3,7 +3,8 @@ const { init } = require('./src/init');
 const { compile } = require('./src/main');
 
 function activate(context) {
-  const watcher = vscode.workspace.createFileSystemWatcher('**/config-*.nl.html');
+  vscode.window.showInformationMessage("NL-Compiler ready")
+  const watcher = vscode.workspace.createFileSystemWatcher('**/config-*-nl.html');
   watcher.onDidCreate((uri) => {
     init(uri);
   });
@@ -11,7 +12,7 @@ function activate(context) {
   context.subscriptions.push(watcher);
 
   const saveListener = vscode.workspace.onDidSaveTextDocument((doc) => {
-    if (doc.fileName.endsWith('.nl.html')) {
+    if (doc.fileName.endsWith('-nl.html')) {
       compile(doc);
     }
   });

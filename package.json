@@ -1,8 +1,15 @@
 {
   "name": "nl-compiler",
-  "displayName": "nl-compiler",
+  "displayName": "NL-compiler",
   "description": "newsletter compiler",
-  "version": "0.0.1",
+  "publisher": "moritzpruenster",
+  "icon": "assets/logo.png",
+  "version": "1.0.1",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Knoch1/nl-compiler.git"
+  },
   "engines": {
     "vscode": "^1.99.0"
   },
@@ -10,15 +17,17 @@
     "Other"
   ],
   "activationEvents": [
+    "onCommand:nl-compiler.test",
     "onStartupFinished",
-    "onLanguage:html"
+    "onLanguage:html",
+    "workspaceContains:**/config-*.nl.html"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
         "command": "nl-compiler.helloWorld",
-        "title": "Hello World"
+        "title": "NL Compiler: Test Activation"
       }
     ]
   },
@@ -41,6 +50,7 @@
     "cheerio": "^1.0.0",
     "clean-css": "^5.3.3",
     "css": "^3.0.0",
+    "he": "^1.2.0",
     "js-beautify": "^1.15.4",
     "postcss": "^8.5.6",
     "punycode": "^2.3.1"
